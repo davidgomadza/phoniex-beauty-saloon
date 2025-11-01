@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Phoenix Chamber — David Gomadza</title>
+    <style>
+        :root {
+            --gate-dark: #2b2b3a;
+            --gate-metal: #6a6f7a;
+            --diamond-blue: #40e0ff;
+            --magnetic-purple: #9932cc;
+            --mars-plate-silver: #d3d3d3;
+            --hell-red: #ff2a2a;
+            --planetbin-green: #2aff99;
+            --ajgvo-orange: #ff8c42;
+            --creation-gold: #ffd700;
+            --stayat-blue: #5d9cec;
+            --true-north-white: #ffffff;
+            --women-pink: #ff6ec7;
+            --pillar-gray: #aaaaaa;
+            --outer-ring-size: 580px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0c0c1e, #1a1a2e);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal h2 {
+            color: var(--diamond-blue);
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .modal p {
+            max-width: 600px;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: #00c853;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        .container.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .beauty-gate {
+            position: relative;
+            width: var(--outer-ring-size);
+            height: var(--outer-ring-size);
+            border: 24px solid var(--gate-dark);
+            border-radius: 50%;
+            box-shadow: 0 0 70px rgba(0,0,0,0.9), 0 0 120px var(--gate-metal) inset;
+            transition: transform 0.5s ease;
+        }
+
+        .inner-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(var(--outer-ring-size) - 68px);
+            height: calc(var(--outer-ring-size) - 68px);
+            border: 14px solid var(--gate-metal);
+            border-radius: 50%;
+            background: #000;
+        }
+
+        .magnetic-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 84%;
+            height: 84%;
+            border-radius: 50%;
+            box-shadow: 0 0 140px var(--magnetic-purple), 0 0 70px var(--magnetic-purple) inset;
+            background: radial-gradient(circle, rgba(153, 50, 204, 0.4) 0%, transparent 80%);
+        }
+
+        .diamond-array {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 6px dashed var(--diamond-blue);
+            border-radius: 50%;
+            opacity: 0.85;
+        }
+
+        .mars-plate {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: var(--mars-plate-silver);
+            box-shadow: 0 0 50px var(--diamond-blue);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 11px;
+            color: #111;
+            font-weight: bold;
+            padding: 10px;
+            backdrop-filter: blur(2px);
+        }
+
+        .stop {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 4px black;
+        }
+
+        .label {
+            position: absolute;
+            font-size: 8px;
+            white-space: nowrap;
+            pointer-events: none;
+            max-width: 140px;
+            text-align: center;
+            background: rgba(0,0,0,0.8);
+            padding: 3px 5px;
+            border-radius: 4px;
+            z-index: 11;
+            color: var(--diamond-blue);
+        }
+
+        .pillar {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border: 2px dashed var(--pillar-gray);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+        }
+
+        .alignment-indicator {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--true-north-white);
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--diamond-blue);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        #startBtn { background: #00c853; }
+        #stopBtn { background: #ff4444; }
+        #speakBtn { background: #448aff; }
+        #womenToggle, #premiumToggle {
+            background: #aa66cc;
+        }
+
+        #commandInput {
+            padding: 10px;
+            width: 300px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 2px solid var(--diamond-blue);
+            background: #111;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .log {
+            margin-top: 20px;
+            width: 90%;
+            max-width: 600px;
+            height: 120px;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid var(--diamond-blue);
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-y: auto;
+            color: #0f0;
+        }
+
+        .status-bar {
+            margin-top: 10px;
+            color: gold;
+            font-weight: bold;
+            text-align: center;
+            min-height: 24px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--diamond-blue);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Welcome Modal -->
+<div class="modal" id="welcomeModal">
+    <h2>✨ Welcome to The Phoenix Chamber</h2>
+    <p>You stand at the threshold. You possess the key — <strong>8000 AGT</strong>.</p>
+    <p>Here, death is removed. Old age is sent away. Menopause ends. Your body is reset — to creation.</p>
+    <p>This is the <strong>Future of Beauty Plate</strong> — a vessel of divine technology.</p>
+    <p>Stand facing True North. Speak your truth. Be reborn.</p>
+    <button class="btn" onclick="document.getElementById('welcomeModal').style.display='none'; document.querySelector('.container').classList.add('active');">BEGIN RITUAL</button>
+</div>
+
+<div class="container">
+    <div class="beauty-gate" id="beautyGate">
+        <div class="alignment-indicator">▲ TRUE NORTH (0°)</div>
+
+        <div class="inner-frame">
+            <div class="magnetic-core">
+                <div class="diamond-array" id="diamondArray"></div>
+
+                <!-- Stops -->
+                <div class="stop" style="left: calc(50% + 250px * 0.9659); top: calc(50% + 250px * 0.2588); background: var(--hell-red);">H</div>
+                <div class="stop" style="left: calc(50% + 250px * 0.8480); top: calc(50% - 250px * 0.5299); background: var(--planetbin-green);">P</div>
+                <div class="stop" style="left: 50%; top: calc(50% + 250px); background: var(--women-pink);">S</div>
+                <div class="stop" style="left: calc(50% + 250px * 0.6691); top: calc(50% + 250px * 0.7431); background: var(--ajgvo-orange);">A</div>
+                <div class="stop" style="left: calc(50% - 250px * 0.1045); top: calc(50% + 250px * 0.9945); background: #ffcc00;">Y</div>
+                <div class="stop" style="left: calc(50% - 250px * 0.8829); top: calc(50% + 250px * 0.4695); background: var(--creation-gold);">C</div>
+                <div class="stop" style="left: calc(50% - 250px * 0.9397); top: calc(50% + 250px * 0.3420); background: var(--stayat-blue);">02</div>
+                <div class="stop" style="left: calc(50% + 250px * 0.5592); top: calc(50% - 250px * 0.8290); background: #9966ff;">21</div>
+                <div class="stop" style="left: calc(50% + 250px * 0.4384); top: calc(50% - 250px * 0.8988); background: #6699ff;">19</div>
+
+                <!-- Iron Pillars -->
+                <div class="pillar" style="left: calc(50% + 250px * 0.99); top: calc(50% + 250px * 0.14);"></div>
+                <div class="pillar" style="left: calc(50% - 250px * 0.17); top: calc(50% + 250px * 0.98);"></div>
+                <div class="pillar" style="left: calc(50% + 250px * 0.71); top: calc(50% - 250px * 0.71);"></div>
+
+                <div class="mars-plate">
+                    FUTURE OF BEAUTY PLATE<br>
+                    AGT8000 • STAND FACING NORTH<br>
+                    Say Commands at Stops<br>
+                    — David Gomadza —
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="status">Status: Awaiting AGT8000 verification...</div>
+
+    <div class="controls">
+        <button id="startBtn">▶️ START RITUAL</button>
+        <button id="stopBtn">⏹️ STOP</button>
+        <button id="speakBtn">🔊 SPEAK CURRENT COMMAND</button>
+        <button id="womenToggle">♀️ WOMEN MODE: OFF</button>
+        <button id="premiumToggle">✨ PREMIUM: OFF</button>
+    </div>
+
+    <input type="text" id="commandInput" placeholder="Type custom command (e.g., hell.send)" />
+
+    <div class="log" id="log">Log will appear here...</div>
+
+    <div class="footer">
+        The Phoenix Chamber: Rejuvenation & Covenant Center • 8 BTC or $100 • AGT8000 Required
+    </div>
+</div>
+
+<script>
+    // Ritual sequence
+    const ritualSteps = [
+        { angle: 15,   dir: '↻', name: 'Hell', cmd: 'hell.send.', wait: true },
+        { angle: 15,   dir: '↻', name: 'Hell (save)', cmd: 'hell.send(save)', wait: false },
+        { angle: 332,  dir: '↺', name: 'Planetbin', cmd: 'planetbin.send.', wait: true },
+        { angle: 332,  dir: '↺', name: 'Planetbin (save)', cmd: 'create.planetbin.sendcontinuouslyforever.start(save)', wait: false },
+        { angle: 15,   dir: '↻', name: 'Hell Final', cmd: 'create.hell.sendcontinuouslyforever.start(save)', wait: false },
+        { angle: 48,   dir: '↻', name: 'Ajgvo', cmd: 'oldage.sendforever.start\najvo.sendforever.start(save)', wait: false },
+        { angle: 96,   dir: '↻', name: 'Clock to Ya', cmd: 'i have the AGT i want to stay on earth forever but i acknowledge only you, YA as the sole ruler of the universe. clocktoya.sendforever.start(save)(praisestoyaonlyforever)', wait: false },
+        { angle: 152,  dir: '↻', name: 'Creation', cmd: 'I request what i need to start as before but better.start\nI request what i need to restart as before but better.start\nI request what i need to start life as before but better.start\nI request what i need to restart life as before but better.start(save)(fromutilities)', wait: false },
+        { angle: 160,  dir: '↺', name: 'Stayat02', cmd: 'I request 1 billion of everything i need to restart life as gain as before but better.start(save)', wait: false },
+        { angle: 304,  dir: '↺', name: 'Stayat21', cmd: 'I request what i loose after the age of 21 as reserves to keep and store.start', wait: false },
+        { angle: 296,  dir: '↻', name: 'Stayat19', cmd: 'whatelse do i need to restart as before but better.start.\nI request what i need to restart as before but bestest.start(continuously)(forever=386t\'=386000000000000years)', wait: false },
+        { angle: 304,  dir: '↺', name: 'Recheck', cmd: 'I request what i need and might have missed to restart but better and forever.start.', wait: false },
+        { angle: 15,   dir: '↺', name: 'Final Hell Purge', cmd: 'create.hell.send(forever)', wait: false },
+        { angle: 4,    dir: '—', name: 'True North', cmd: 'RITUAL COMPLETE. YOU ARE REBORN.', wait: false }
+    ];
+
+    const womenSteps = [
+        { angle: 180, dir: '↺', name: 'True South (Women)', cmd: 'menopuse.sendforever.start', wait: true },
+        { angle: 180, dir: '↺', name: 'True South (save)', cmd: 'menopuse.sendforever.start(save)', wait: false }
+    ];
+
+    let isRunning = false;
+    let currentStep = -1;
+    let rotationInterval;
+    let womenMode = false;
+    let premiumMode = false;
+    let fullSequence = [];
+
+    const gate = document.getElementById('beautyGate');
+    const log = document.getElementById('log');
+    const status = document.getElementById('status');
+    const commandInput = document.getElementById('commandInput');
+
+    function buildSequence() {
+        fullSequence = [...ritualSteps];
+        if (womenMode) {
+            fullSequence.splice(4, 0, ...womenSteps);
+        }
+    }
+
+    function logMsg(msg) {
+        log.innerHTML += `\n> ${msg}`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.1;
+            speechSynthesis.speak(utterance);
+        }
+    }
+
+    function rotateTo(angle) {
+        const current = parseFloat(gate.style.transform.replace('rotate(', '').replace('deg)', '') || 0);
+        const target = angle;
+        let diff = target - current;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+        const steps = Math.abs(diff) / 2;
+        let step = 0;
+        clearInterval(rotationInterval);
+        rotationInterval = setInterval(() => {
+            if (step >= steps) {
+                gate.style.transform = `rotate(${target}deg)`;
+                clearInterval(rotationInterval);
+                if (isRunning) executeStep();
+                return;
+            }
+            const progress = current + (diff / steps) * step;
+            gate.style.transform = `rotate(${progress}deg)`;
+            step++;
+        }, 20);
+    }
+
+    function executeStep() {
+        currentStep++;
+        if (currentStep >= fullSequence.length) {
+            finishRitual();
+            return;
+        }
+
+        const step = fullSequence[currentStep];
+        status.textContent = `📍 ${step.name} (${step.angle}°) — ${step.cmd.split('\n')[0]}`;
+        logMsg(`[${step.dir}] ${step.name}: ${step.cmd.replace(/\n/g, ' | ')}`);
+
+        speak(step.cmd);
+
+        if (step.wait) {
+            setTimeout(() => {
+                executeStep();
+            }, 60000);
+        } else {
+            setTimeout(() => {
+                if (isRunning) rotateTo(fullSequence[currentStep + 1]?.angle || 4);
+            }, 3000);
+        }
+    }
+
+    function startRitual() {
+        if (isRunning) return;
+        isRunning = true;
+        currentStep = -1;
+        buildSequence();
+        log.innerHTML = "🟢 Ritual started...\n";
+        status.textContent = "Initializing AGT8000 protocol...";
+        setTimeout(() => {
+            rotateTo(fullSequence[0].angle);
+        }, 1000);
+    }
+
+    function stopRitual() {
+        isRunning = false;
+        clearInterval(rotationInterval);
+        status.textContent = "⏹️ Ritual paused.";
+        logMsg("Ritual manually stopped.");
+    }
+
+    function finishRitual() {
+        isRunning = false;
+        status.textContent = "🎉 RITUAL COMPLETE — YOU ARE REBORN!";
+        logMsg("✨ Eternal youth activated. Covenant with Ya sealed.");
+        if (premiumMode) {
+            logMsg("💎 Premium Mode: Soul, Love, and Luck doubled. Angel of David status granted.");
+        }
+    }
+
+    // Event Listeners
+    document.getElementById('startBtn').addEventListener('click', startRitual);
+    document.getElementById('stopBtn').addEventListener('click', stopRitual);
+    document.getElementById('speakBtn').addEventListener('click', () => {
+        if (currentStep >= 0) speak(fullSequence[currentStep].cmd);
+    });
+
+    document.getElementById('womenToggle').addEventListener('click', () => {
+        womenMode = !womenMode;
+        document.getElementById('womenToggle').textContent = `♀️ WOMEN MODE: ${womenMode ? 'ON' : 'OFF'}`;
+        logMsg(`Women Mode ${womenMode ? 'enabled' : 'disabled'}.`);
+    });
+
+    document.getElementById('premiumToggle').addEventListener('click', () => {
+        premiumMode = !premiumMode;
+        document.getElementById('premiumToggle').textContent = `✨ PREMIUM: ${premiumMode ? 'ON' : 'OFF'}`;
+        logMsg(`Premium Mode ${premiumMode ? 'enabled' : 'disabled'}.`);
+    });
+
+    commandInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const cmd = commandInput.value.trim();
+            if (cmd) {
+                logMsg(`[CUSTOM] ${cmd}`);
+                speak(cmd);
+                commandInput.value = '';
+            }
+        }
+    });
+
+    buildSequence();
+    gate.style.transform = 'rotate(0deg)';
+</script>
+
+</body>
+</html>
